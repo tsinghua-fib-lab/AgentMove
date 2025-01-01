@@ -1,0 +1,16 @@
+json_repair==0.25.3
+jsmin==3.0.1
+openai==1.25.1
+tqdm==4.65.2
+pandas==2.1.4
+tenacity==8.5.0
+scikit-learn==1.5.1
+numpy==1.26.4
+torch==2.3.0
+httpx==0.27.0
+geopy==2.4.1
+networkx==3.3
+token-count==0.2.1
+openxlab==0.0.33
+gdown==5.2.0
+bypy==1.8.5
