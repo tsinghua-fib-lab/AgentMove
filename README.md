@@ -21,16 +21,18 @@ Extensive experiments utilizing mobility data from two distinct sources reveal t
     - osm_address_web.py        # Given location coordinates, retrieves nearby addresses using the official address resolution service, suitable for small-scale testing
     - trajectory_address_match.py  # Uses various address services and GPT to match a unified four-level address structure, expanding trajectory points with new four-level address information
     - data.py                   # Final preprocessing functions for the data, no need to call manually, will be invoked by the agent automatically
+- models
     - personal_memory.py        # Implementation related to the memory module
     - world_model.py            # Implementation related to the world model
-    - prompts.py                
-    - llm_api.py                
+    - prompts.py                # Prompt templates for llm-based baselines and agentmove
+    - llm_api.py                # unified entry point for all LLM APIs from various LLM providers
 - evaluate
     - evaluations.py            # Results statistics for a single model
     - analysis.py               # Calls evaluations.py to analyze and compare multiple models simultaneously and saves the results in results/summary
-- serving/*                     # Local deployment of LLM
+- serving/*                     # Local deployment of LLM, we use powerful vllm for local deployment
 - baselines/*                   # Implementation of baseline algorithms, we use official implementation of each baselines
-- utils.py                      
+- utils.py
+- assets/*                      # Assets
 ```
 
 # 💡 Running Experiments
