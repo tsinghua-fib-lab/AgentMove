@@ -6,6 +6,8 @@ Next location prediction plays a crucial role in various real-world applications
 In AgentMove, we first decompose the mobility prediction task and design specific modules to complete them, including spatial-temporal memory for individual mobility pattern mining, world knowledge generator for modeling the effects of urban structure and collective knowledge extractor for capturing the shared patterns among population. Finally, we combine the results of three modules and conduct a reasoning step to generate the final predictions. 
 Extensive experiments utilizing mobility data from two distinct sources reveal that AgentMove surpasses the leading baseline by 3.33\% to 8.57\% across 8 out of 12 metrics and it shows robust predictions with various LLMs as base and also less geographical bias across cities.
 
+![](./assets/framework.png)
+
 # LLM API Key
 Configure the relevant API Key in .bashrc, then execute source .bashrc
 ```bash
