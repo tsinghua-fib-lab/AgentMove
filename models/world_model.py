@@ -10,6 +10,9 @@ from config import CITY_DATA_DIR
 
 
 class SpatialWorld:
+    """
+    World Knowledge Generator
+    """
     def __init__(self, platform, model_name, city_name, traj_seqs, explore_num=5):
         self.city_name = city_name
         self.max_lens = 1000
@@ -69,6 +72,9 @@ class SpatialWorld:
 
 
 class SocialWorld:
+    """
+    Collective Knowledge Extractor
+    """
     def __init__(self, traj_dataset, save_dir, city_name, khop=1, max_neighbors=10) -> None:
         self.save_dir = save_dir
         self.city_name = city_name

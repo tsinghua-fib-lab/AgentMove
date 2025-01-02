@@ -242,7 +242,7 @@ if __name__ == "__main__":
     parser.add_argument('--sample_one_traj_of_user', action='store_true',)
     parser.add_argument('--max_sample_trajectories', type=int, default=100)
     parser.add_argument('--use_int_venue', action='store_true', help='Use int Venue ID')
-    parser.add_argument('--prompt_type', type=str, default="agent_move_v2", choices=["agent_move_v7", "social_world_v2", "agent_move_v5", "agent_move_v6", "agent_move_v4", "social_world_v1", "origin", "world_model_v1", "world_model_v2", "personal_memory_v1", "agent_move_v3", "agent_move_v2", "llmmob", "llmzs"])
+    parser.add_argument('--prompt_type', type=str, default="agent_move_v6", choices=["agent_move_v6", "origin", "llmmob", "llmzs"])
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--exp_name', type=str, default="")
     parser.add_argument('--social_info_type', type=str, default="address")
