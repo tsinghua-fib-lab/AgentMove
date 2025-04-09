@@ -21,7 +21,7 @@ Extensive experiments utilizing mobility data from two distinct sources reveal t
 - processing                    # Raw data processing code, for details refer to[README](./scripts/README.md)
     - process_fsq_city_data.py  # Parses city trajectory data from raw global Foursquare check-in data, containing only location coordinates, ID, and category
     - process_isp_shanghai.py   # Processes raw ISP data and matches it with the Foursquare data format for unified handling later
-    - osm_address_deploy.py     # Given location coordinates, retrieves nearby addresses using a self-deployed address resolution service for large-scale parallel processing
+    - osm_address_deploy.py     # Given location coordinates, retrieves nearby addresses using a self-deployed address resolution service for large-scale parallel processing, https://github.com/mediagis/nominatim-docker/tree/master/4.4
     - osm_address_web.py        # Given location coordinates, retrieves nearby addresses using the official address resolution service, suitable for small-scale testing
     - trajectory_address_match.py  # Uses various address services and GPT to match a unified four-level address structure, expanding trajectory points with new four-level address information
     - data.py                   # Final preprocessing functions for the data, no need to call manually, will be invoked by the agent automatically
@@ -50,17 +50,33 @@ export DeepInfra_API_KEY="xx"
 export OpenAI_API_KEY="xx"
 export vllm_KEY="xx"
 ```
+## Installation
+```bash
+git clone https://github.com/tsinghua-fib-lab/AgentMove.git
+
+cd AgentMove
+
+conda create -n agentmove python==3.10
+pip install -r requirements.txt
+```
 
 ## Preprocessing
 ```bash
 # download data tsmc2014, tist2015, www2019
+# we have uploaded www2019 dataset in data folder
 python -m processing.download --data_name=www2019
-# processing Foursquare data, tist2015, gowalla
-python -m processing.process_fsq_city_data
+
+# # processing Foursquare data, tist2015, gowalla
+# python -m processing.process_fsq_city_data
+
 # processing IPS GPS trajectory data www2019
 python -m processing.process_isp_shanghai
+
 # get OSM address
+# A local Nominatim service must be deployed prior to executing these commands. Alternatively, you may utilize the official Nominatim API
 python -m processing.osm_address_deploy
+# python -m processing.osm_address_web
+
 # matching trajectory with address
 python -m processing.trajectory_address_match
 ```

@@ -18,6 +18,7 @@ SERVING_IP = ""
 port_mapping = {}
 PORT = port_mapping.get(CURRENT_CITY, 18081)
 
+# you can deploy nominatim service by referring to https://github.com/mediagis/nominatim-docker/tree/master/4.4
 ###########new version##################
 @retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(10))
 def reverse_geocode_v2(city, venue, lon, lat):
