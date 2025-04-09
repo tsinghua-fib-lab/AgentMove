@@ -1,4 +1,4 @@
-# AgentMove
+# 🤖 AgentMove
 AgentMove: A Large Language Model based Agentic Framework for Zero-shot Next Location Prediction
 
 # 🌍 Introduction
@@ -21,6 +21,7 @@ Extensive experiments utilizing mobility data from two distinct sources reveal t
     - osm_address_web.py        # Given location coordinates, retrieves nearby addresses using the official address resolution service, suitable for small-scale testing
     - trajectory_address_match.py  # Uses various address services and GPT to match a unified four-level address structure, expanding trajectory points with new four-level address information
     - data.py                   # Final preprocessing functions for the data, no need to call manually, will be invoked by the agent automatically
+    - download.py               # download raw dataset
 - models
     - personal_memory.py        # Implementation related to the memory module
     - world_model.py            # Implementation related to the world model
@@ -82,14 +83,11 @@ Example
 If you find this work helpful, please cite our paper.
 
 ```latex
-@misc{feng2024agentmove,
-      title={AgentMove: Predicting Human Mobility Anywhere Using Large Language Model based Agentic Framework}, 
-      author={Jie Feng and Yuwei Du and Jie Zhao and Yong Li},
-      year={2024},
-      eprint={2408.13986},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2408.13986}, 
+@article{feng2024agentmove,
+  title={AgentMove: A Large Language Model based Agentic Framework for Zero-shot Next Location Prediction},
+  author={Feng, Jie and Du, Yuwei and Zhao, Jie and Li, Yong},
+  journal={arXiv preprint arXiv:2408.13986},
+  year={2024}
 }
 ```
 
