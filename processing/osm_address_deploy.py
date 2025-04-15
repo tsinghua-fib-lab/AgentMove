@@ -12,7 +12,7 @@ from tenacity import (
 )
 from config import DATASET, NOMINATIM_PATH, NO_ADDRESS_TRAJ_DIR
 
-CURRENT_CITY = "Moscow"
+CURRENT_CITY = "Shanghai_ISP"
 WORKERS = 20
 SERVING_IP = ""
 port_mapping = {}
@@ -108,8 +108,8 @@ if __name__ == '__main__':
         venue_map[city] = {}
         for _,row in fs.iterrows():
             venue = row['venue_id']
-            lon = row['lon']
-            lat = row['lat']
+            lon = row['longitude']
+            lat = row['latitude']
             if venue not in venue_map[city]:
                 venue_map[city][venue] = (lon, lat)
         
