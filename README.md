@@ -3,7 +3,7 @@ AgentMove: A Large Language Model based Agentic Framework for Zero-shot Next Loc
 
 # 📰 News
 - 2025.02 We have uploaded a new version of the AgentMove paper! [Check it out here](https://arxiv.org/abs/2408.13986)!
-- 2025.01 Our paper has been accepted to [NAACL 2025](https://2025.naacl.org/) as a main conference paper!.
+- 2025.01 Our paper has been accepted to [NAACL 2025](https://aclanthology.org/2025.naacl-long.61/) as a main conference paper!.
 
 # 🌍 Introduction
 Next location prediction plays a crucial role in various real-world applications. Recently, due to the limitation of existing deep learning methods, attempts have been made to apply large language models (LLMs) to zero-shot next location prediction task. However, they directly generate the final output using LLMs without systematic design, which limits the potential of LLMs to uncover complex mobility patterns and underestimates their extensive reserve of global geospatial knowledge. In this paper, we introduce \textbf{AgentMove}, a systematic agentic prediction framework to achieve generalized next location prediction. 
