@@ -103,11 +103,12 @@ Example
 If you find this work helpful, please cite our paper.
 
 ```latex
-@article{feng2024agentmove,
-  title={AgentMove: A Large Language Model based Agentic Framework for Zero-shot Next Location Prediction},
+@inproceedings{feng2025agentmove,
+  title={Agentmove: A large language model based agentic framework for zero-shot next location prediction},
   author={Feng, Jie and Du, Yuwei and Zhao, Jie and Li, Yong},
-  journal={arXiv preprint arXiv:2408.13986},
-  year={2024}
+  booktitle={Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers)},
+  pages={1322--1338},
+  year={2025}
 }
 ```
 
