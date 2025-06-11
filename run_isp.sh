@@ -1,11 +1,11 @@
 PROMPT_NUM=200
 WORKERS=50
-PLATFORM=OpenAI
+PLATFORM=DeepInfra
 TRAJ_MIN=3
 TRAJ_MAX=50
 SOCIAL_TYPE=address
 EXP_NAME="20240823-$TRAJ_MIN-$TRAJ_MAX-int"
-MODEL_NAME=gpt4omini
+MODEL_NAME=llama3-8b
 MEMORY_LEN=15
 
 CITY="Shanghai"
@@ -24,8 +24,8 @@ python -m agent\
  --traj_max_len=$TRAJ_MAX \
  --social_info_type=$SOCIAL_TYPE \
  --memory_lens=$MEMORY_LEN \
- --sample_one_traj_of_user \
  --skip_existing_prediction \
+ --sample_one_traj_of_user \
  --use_int_venue
 
 # analysis results

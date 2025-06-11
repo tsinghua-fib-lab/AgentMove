@@ -216,7 +216,7 @@ class Dataset:
 
                 return data
 
-            if self.dataset_name in ["Shanghai_ISP", "Shanghai_Weibo"]:
+            if self.dataset_name in ["Shanghai"]:
                 pass
             else:
                 # Applying the function to group by ID and then by time window

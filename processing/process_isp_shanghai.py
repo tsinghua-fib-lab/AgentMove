@@ -232,7 +232,7 @@ def load_data_match_cat_telecom(data_path, data_name, sample_users=None):
                 for traj_point in traj_points:
                     real_time = (traj_point[0]*24 + traj_point[2])*3600+start_time
                     real_time_str = time.asctime( time.localtime(real_time) )
-                    all_rows.append({"city":"Shanghai_ISP", "user_id":user, "traj_id": si, "utc_time": real_time_str,"venue_id":traj_point[1],"venue_name": traj_point[4],'longitude':traj_point[5][0],'latitude':traj_point[5][1],"venue_category_name":traj_point[3]})
+                    all_rows.append({"city":"Shanghai", "user_id":user, "traj_id": si, "utc_time": real_time_str,"venue_id":traj_point[1],"venue_name": traj_point[4],'longitude':traj_point[5][0],'latitude':traj_point[5][1],"venue_category_name":traj_point[3]})
     result = pd.DataFrame(all_rows)
     return result
 
@@ -243,5 +243,5 @@ if __name__ == '__main__':
     data_sparse_cat =  load_data_match_sparse_cat(WWW2019_DATA_DIR, 'weibo', sample_users=sample_users)
 
     os.makedirs(NO_ADDRESS_TRAJ_DIR, exist_ok=True)
-    data_dense_cat.to_csv(os.path.join(NO_ADDRESS_TRAJ_DIR, "Shanghai_ISP_filtered.csv"), index=False)
+    data_dense_cat.to_csv(os.path.join(NO_ADDRESS_TRAJ_DIR, "Shanghai_filtered.csv"), index=False)
     data_sparse_cat.to_csv(os.path.join(NO_ADDRESS_TRAJ_DIR,"Shanghai_Weibo_filtered.csv"), index=False)

@@ -4,8 +4,8 @@ import os
 # 其他配置
 PROXY = "http://127.0.0.1:10190" # you should prepare your proxy server
 # EXP_CITIES = ['Tokyo', 'Nairobi', 'NewYork', 'Sydney', 'CapeTown', 'Paris', 'Beijing', 'Mumbai', 'SanFrancisco', 'London', 'SaoPaulo', 'Moscow']
-EXP_CITIES = ["Beijing"] # use it for quickly start
-# EXP_CITIES = ["Shanghai"] # for WWW2019
+# EXP_CITIES = ["Beijing"] # use it for quickly start
+EXP_CITIES = ["Shanghai"] # for WWW2019
 
 #'gowalla'或'TIST2015'
 DATASET = 'TIST2015' # format which used by TIST2015 and WWW2019

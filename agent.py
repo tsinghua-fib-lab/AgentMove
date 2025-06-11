@@ -109,7 +109,7 @@ class Agents:
             v = test_dataset[user_id]
             traj_ids = [str(y) for y in sorted([int(x) for x in list(v.keys())])]
 
-            if self.city_name in ["Shanghai_Weibo", "Shanghai_ISP"]:
+            if self.city_name in ["Shanghai"]:
                 if len(traj_ids)==0:
                     continue
             else:
