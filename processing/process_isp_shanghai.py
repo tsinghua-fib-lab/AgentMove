@@ -241,5 +241,7 @@ if __name__ == '__main__':
     sample_users = samples_generator(WWW2019_DATA_DIR, "weibo", threshold=2000)
     data_dense_cat = load_data_match_cat_telecom(WWW2019_DATA_DIR, 'isp', sample_users=sample_users)
     data_sparse_cat =  load_data_match_sparse_cat(WWW2019_DATA_DIR, 'weibo', sample_users=sample_users)
+
+    os.makedirs(NO_ADDRESS_TRAJ_DIR, exist_ok=True)
     data_dense_cat.to_csv(os.path.join(NO_ADDRESS_TRAJ_DIR, "Shanghai_ISP_filtered.csv"), index=False)
     data_sparse_cat.to_csv(os.path.join(NO_ADDRESS_TRAJ_DIR,"Shanghai_Weibo_filtered.csv"), index=False)

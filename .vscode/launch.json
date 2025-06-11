@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python DEBUG",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "processing.trajectory_address_match",  // 指定模块模式运行
+      "console": "integratedTerminal",
+      "args": [],
+      "stopOnEntry": false,
+      "python": "/data/fengjie/.conda/envs/agentmove/bin/python"  // 或指定完整路径如 "python3" 或虚拟环境路径
+    },
+     {
+      "name": "Python Agent",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "agent",  // 指定模块模式运行
+      "console": "integratedTerminal",
+      "args": [
+        "--city_name", 
+        "Beijing", 
+        "--prompt_num", 
+        "200", 
+        "--workers",
+        "10",
+        "--prompt_type", 
+        "agent_move_v6", 
+        "--model_name", 
+        "llama4-17b", 
+        "--sample_one_traj_of_user", 
+        "--exp_name", 
+        "test", 
+        "--social_info_type", 
+        "address", 
+        "--traj_min_len", 
+        "3", 
+        "--traj_max_len", 
+        "50"],
+      "stopOnEntry": false,
+      "python": "/data/fengjie/.conda/envs/agentmove/bin/python"  // 或指定完整路径如 "python3" 或虚拟环境路径
+    }
+  ]
+}

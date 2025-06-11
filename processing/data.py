@@ -40,9 +40,6 @@ class Dataset:
         self.get_processed_datasets()
 
         if self.dataset_name not in self.processed_datasets:
-            # download the dataset if necessary
-            self.download_dataset()
-
             print('Loading the dataset...')
 
             self.data = self.get_dataset()
@@ -113,11 +110,15 @@ class Dataset:
         else:
             file_path = os.path.join(CITY_DATA_DIR,'{}_filtered.csv'.format(self.dataset_name))
             
-            if self.dataset_name in ["Shanghai_ISP", "Shanghai_Weibo"]:
-                data = pd.read_csv(file_path, header=0, encoding='utf-8')
-            else:
-                columns = ["city", "user_id", "timezone_offset", "venue_id", "utc_time", "longitude", "latitude", "venue_category_name","admin", "subdistrict", "poi", "street"]
-                data = pd.read_csv(file_path, header=0, names = columns, encoding='utf-8')
+            data = pd.read_csv(file_path, header=0, encoding='utf-8')
+            rename_dict = {
+                'user': 'user_id',
+                'time': 'timezone_offset',
+                'venue_cat_name': 'venue_category_name',
+            }
+            data.rename(columns=rename_dict, inplace=True)
+
+
         #city,user,time,venue_id,utc_time,lon,lat,venue_cat_name,admin,subdistrict,poi,street
         # convert date time to pandas datetime
         data['datetime'] = pd.to_datetime(data['utc_time'])

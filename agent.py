@@ -231,8 +231,8 @@ class Agents:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--city_name', type=str, default="Shanghai")
-    parser.add_argument('--model_name', type=str, default="gpt4omini", choices=["gpt35turbo", "llama3-8b", "llama3-8b-pro", "llama3-70b", 'gemma2-9b', 'gpt4omini', 'glm4-9b', 'qwen2-72b', 'qwen2-14b', 'qwen2-1.5b', 'qwen2-7b', 'llama3.1-8b', 'llama3.1-70b', 'mistral7bv3', 'llama3.1-405b', "llama3-8B-local", "gemma2-2b-local", "chatglm3-citygpt", "chatglm3-6B-local"])
-    parser.add_argument('--platform', type=str, default="OpenAI", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm"])
+    parser.add_argument('--model_name', type=str, default="qwen2.5-7b")
+    parser.add_argument('--platform', type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm"])
     parser.add_argument('--trajectory_mode', type=str, default="trajectory_split", choices=["trajectory_split"])
     parser.add_argument("--historical_stays", type=int, default=15)
     parser.add_argument('--context_stays', type=int, default=6)
@@ -261,7 +261,7 @@ if __name__ == "__main__":
     start_time = time.time()
     dataset = Dataset(
         dataset_name=args.city_name,
-        traj_min_len=2 if args.city_name in ["Shanghai_ISP", "Shanghai_Weibo"] else 3,
+        traj_min_len=2 if args.city_name in ["Shanghai"] else 3,
         trajectory_mode=args.trajectory_mode, 
         historical_stays=args.historical_stays,
         context_stays=args.context_stays,

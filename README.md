@@ -42,14 +42,25 @@ Extensive experiments utilizing mobility data from two distinct sources reveal t
 
 # 💡 Running Experiments
 
+
 ## LLM API Key
-Configure the relevant API Key in .bashrc, then execute source .bashrc
+Configure the relevant API Key in `.bashrc`, then execute `source .bashrc`
 ```bash
+# provide free tokons for many 7B models
 export SiliconFlow_API_KEY="xx"
+
+# following APIs may need proxy
 export DeepInfra_API_KEY="xx"
 export OpenAI_API_KEY="xx"
+
+# you can also deploy model locally via vllm
 export vllm_KEY="xx"
+
+# set nominatim server address if you deploy it locally
+export nominatim_deploy_server_address="IP:Port"
 ```
+We define supported models list in `models/llm_api.py`, you can add new models and new platforms by modifying it.
+
 ## Installation
 ```bash
 git clone https://github.com/tsinghua-fib-lab/AgentMove.git
@@ -62,28 +73,44 @@ pip install -r requirements.txt
 
 ## Preprocessing
 ```bash
-# download data tsmc2014, tist2015, www2019
+# Step1: you can define city collection in config.py with EXP_CITIES
+EXP_CITIES = ["Shanghai"] # for WWW 2019 ISP
+# EXP_CITIES = ['Tokyo', 'Nairobi', 'NewYork', 'Sydney', 'CapeTown', 'Paris', 'Beijing', 'Mumbai', 'SanFrancisco', 'London', 'SaoPaulo', 'Moscow'] # for TIST 2015
+
+# download data tist2015(used in paper), www2019(used in paper), tsmc2014
 # we have uploaded www2019 dataset in data folder
 python -m processing.download --data_name=www2019
 
+# Step2:
 # # processing Foursquare data, tist2015, gowalla
 # python -m processing.process_fsq_city_data
 
 # processing IPS GPS trajectory data www2019
 python -m processing.process_isp_shanghai
 
-# get OSM address
+# Step3: get open street map address
 # A local Nominatim service must be deployed prior to executing these commands. Alternatively, you may utilize the official Nominatim API
 python -m processing.osm_address_deploy
 # python -m processing.osm_address_web
 
-# matching trajectory with address
+# Step4: matching trajectory with address
 python -m processing.trajectory_address_match
 ```
+
 ## Runing and Evaluation
 Agent
 ```bash
-python -m agent --cityname=Beijing --prompt_num=10 --workers=10 --prompt_type=agent_move_v6 --model_name=llama3-8b
+python -m agent --sample_one_traj_of_user \
+    --social_info_type=address \
+    --traj_min_len=3 \
+    --traj_max_len=50 \
+    --city_name=Beijing \
+    --prompt_num=50 \
+    --workers=20 \
+    --exp_name=test \
+    --prompt_type=agent_move_v6 \
+    --model_name=llama4-17b \
+    --platform=DeepInfra
 ```
 Evaluation
 ```bash
@@ -92,11 +119,21 @@ python -m evaluate.analysis --eval_path=results/20240505/Beijing/agentmove/ --le
 python -m evaluate.analysis --eval_path=results/20240505/Beijing/agentmove/llama3-8b/ --level=llm
 python -m evaluate.analysis --eval_path=results/20240505/Beijing/agentmove/llama3-8b/agent_move_v6/ --level=prompt
 ```
-Example
+More running examples
 ```bash
 ./run_fsq.sh
 ./run_isp.sh
 ```
+
+# DEBUGING Tips
+1. If you encounter any exceptions, you can try relaxing the try-except control in the code to help with debugging.
+2. You can refer to the launch.json in .vscode to debug with remote server.
+
+# TODO List
+- [ ] update LLM support, e.g., adding "qwen2.5" and "deepseek", openrouter platform
+- [ ] add new baselines, e.g., adding "Taming the Long Tail in Human Mobility Prediction"
+- [ ] add new datasets, e.g., adding "YJMob100K"
+
 
 # 🌟 Citation
 

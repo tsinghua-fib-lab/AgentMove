@@ -31,16 +31,15 @@ class LLMAPI:
         
         self.platform_list = ["SiliconFlow", "OpenAI", "DeepInfra", 'vllm']
         self.model_platforms = {
-                    "SiliconFlow":  [
-                        'llama3-8b', 'llama3-70b', 'gemma2-9b', 'gemma2-27b', 'mistral7bv2', 'qwen2-1.5b', 'qwen2-7b', 'qwen2-14b', 'qwen2-72b', 'glm4-9b', 'glm3-6b', 'deepseekv2', 'llama3.1-8b', 'llama3.1-70b', 'llama3.1-405b'] + [
-                        'llama3-8b-pro', 'gemma2-9b-pro', 'mistral7bv2-pro', 'qwen2-1.5b-pro', 'qwen2-7b-pro', 'glm4-9b-pro', 'glm3-6b-pro'
-                    ],
+                    "SiliconFlow":  ['qwen2.5-72b', 'qwen2.5-7b', 'qwen2-1.5b', 'qwen2-7b', 'qwen2-14b', 'qwen2-72b', 'glm4-9b', 'glm3-6b', 'deepseekv2', 'qwen2-1.5b-pro', 'qwen2-7b-pro', 'glm4-9b-pro', 'glm3-6b-pro'],
                     "OpenAI":       ['gpt35turbo', 'gpt4turbo', 'gpt4o', 'gpt4omini'],
-                    "DeepInfra":    ['llama3-8b', 'llama3-70b', 'gemma2-9b', 'gemma2-27b', 'mistral7bv2', 'qwen2-7b', 'qwen2-72b', 'llama3.1-8b', 'llama3.1-70b', 'mistral7bv3', 'llama3.1-405b'],
-                    "vllm": ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local']
+                    "DeepInfra":    ['llama4-17b', 'llama3-8b', 'llama3-70b', 'gemma2-9b', 'gemma2-27b', 'mistral7bv2', 'llama3.1-8b', 'llama3.1-70b', 'mistral7bv3', 'llama3.1-405b'],
+                    "vllm":         ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local']
                 }
         
         self.model_mapper = {
+            'qwen2.5-7b': "Qwen/Qwen2.5-7B-Instruct",
+            'qwen2.5-72b': "Qwen/Qwen2.5-72B-Instruct",
             'gpt35turbo': 'gpt-3.5-turbo-0125',
             'gpt4turbo': 'gpt-4-turbo-2024-04-09',
             'gpt4o': 'gpt-4o-2024-05-13',
@@ -51,6 +50,7 @@ class LLMAPI:
             'llama3-70b': 'meta-llama/Meta-Llama-3-70B-Instruct',
             'llama3.1-70b': 'meta-llama/Meta-Llama-3.1-70B-Instruct',
             'llama3.1-405b': 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+            "llama4-17b": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
             'llama2-7b': 'meta-llama/Llama-2-7b-chat-hf',
             'llama2-13b': 'meta-llama/Llama-2-13b-chat-hf',
             'llama2-70b': 'meta-llama/Llama-2-70b-chat-hf',

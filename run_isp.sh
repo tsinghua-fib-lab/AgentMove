@@ -8,7 +8,7 @@ EXP_NAME="20240823-$TRAJ_MIN-$TRAJ_MAX-int"
 MODEL_NAME=gpt4omini
 MEMORY_LEN=15
 
-CITY="Shanghai_ISP"
+CITY="Shanghai"
 PROMPT_TYPE="llmzs" # llmzs, llmmob, agent_move_v6
 
 # running exp
