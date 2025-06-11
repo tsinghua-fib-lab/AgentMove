@@ -101,7 +101,7 @@ if __name__ == '__main__':
             "User ID", "Venue ID", "UTC Time", "Timezone Offset"
         ])
         
-        for city_name in tqdm.tqdm(city_dict):
+        for city_name in tqdm.tqdm(exp_cities):
             print("processing {} ...".format(city_name))
             result = []
             venues = set(city_dict[city_name])   
@@ -127,7 +127,7 @@ if __name__ == '__main__':
                     print(venue)
                     continue
                 city = venue_dict[venue]
-                result.append({"city":city,"user":user,"time":time,"venue_id":venue,"utc_time":utc_time,"lon":venue_message[venue]["lon"],"lat":venue_message[venue]["lat"],"venue_cat_name":venue_message[venue]["venue_cat_name"]})   
+                result.append({"city":city,"user":user,"time":time,"venue_id":venue,"utc_time":utc_time,"longitude":venue_message[venue]["lon"],"latitude":venue_message[venue]["lat"],"venue_cat_name":venue_message[venue]["venue_cat_name"]})   
 
             print("output extracted data...")
             print("Filtered POIs:")

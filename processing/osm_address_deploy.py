@@ -10,20 +10,15 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential,
 )
-from config import DATASET, NOMINATIM_PATH, NO_ADDRESS_TRAJ_DIR
+from config import DATASET, NOMINATIM_PATH, NO_ADDRESS_TRAJ_DIR, NOMINATIM_DEPLOY_SERVER, NOMINATIM_DEPLOY_WORKERS, EXP_CITIES
 
-CURRENT_CITY = "Shanghai_ISP"
-WORKERS = 20
-SERVING_IP = ""
-port_mapping = {}
-PORT = port_mapping.get(CURRENT_CITY, 18081)
 
 # you can deploy nominatim service by referring to https://github.com/mediagis/nominatim-docker/tree/master/4.4
 ###########new version##################
 @retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(10))
 def reverse_geocode_v2(city, venue, lon, lat):
     # https://nominatim.org/release-docs/develop/api/Reverse/
-    url = "http://{}:{}/reverse?format=jsonv2&lat={}&lon={}&zoom=18&addressdetails=1&accept-language=en-US".format(SERVING_IP, PORT, lat, lon)
+    url = "http://{}/reverse?format=jsonv2&lat={}&lon={}&zoom=18&addressdetails=1&accept-language=en-US".format(NOMINATIM_DEPLOY_SERVER, lat, lon)
     response = requests.get(url)
     location = json.loads(response.text)
     try:
@@ -70,12 +65,13 @@ def process_map_v2(city, venue_city):
             lat, lon = coord[1], coord[0]
             coor_list.append((city, venue, lon, lat))
 
-    with multiprocessing.Pool(WORKERS) as pool:
+    with multiprocessing.Pool(NOMINATIM_DEPLOY_WORKERS) as pool:
         results = pool.starmap(geocode_extract, coor_list)
     for res in results:
         city_res.append(res)
     
     data = pd.json_normalize(city_res)
+    os.makedirs(NOMINATIM_PATH, exist_ok=True)
     data.to_csv(os.path.join(NOMINATIM_PATH, "{}.csv".format(city)), sep="\t")
 
 
@@ -96,12 +92,13 @@ if __name__ == '__main__':
     venue_map = {}
     cities = []
     print("reading city files...")
+
     for file in os.listdir(NO_ADDRESS_TRAJ_DIR):
         fs = pd.read_csv(os.path.join(NO_ADDRESS_TRAJ_DIR, file))
         city = file.split("_")[0]
         print(f"processing city {city}...")
 
-        if city != CURRENT_CITY:
+        if city not in EXP_CITIES:
             continue
 
         cities.append(city)
