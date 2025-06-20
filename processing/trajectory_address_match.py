@@ -101,6 +101,7 @@ if __name__ == "__main__":
         done_cities = []
         os.makedirs(CITY_DATA_DIR, exist_ok=True)
         for pos_file in os.listdir(CITY_DATA_DIR):
+            # TODO 当前只要检测到文件存在就会跳过，并不鲁棒，上次执行失败也会产生同样效果
             city = pos_file.split("_")[0]
             done_cities.append(city)
         city = addr_file.split(".")[0]

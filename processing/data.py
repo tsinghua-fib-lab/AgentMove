@@ -15,8 +15,6 @@ class Dataset:
 
     def __init__(self, dataset_name='nyc', trajectory_mode='trajectory_split', historical_stays=40, context_stays=6,
                  hour_bins=72, traj_min_len=5, save_dir='data/processed', use_int_venue=False):
-        self.dataset_url = 'http://www-public.tem-tsp.eu/~zhang_da/pub/dataset_tsmc2014.zip'
-
         self.dataset_name = dataset_name
         self.trajectory_mode = trajectory_mode
         self.history_stays = historical_stays
@@ -66,33 +64,6 @@ class Dataset:
     def get_generated_datasets(self):
         return self.test_dictionary, self.true_locations
 
-    def download_dataset(self):
-        """
-        A function to download the dataset from the URL if the dataset is not present in the current directory
-        :return: None
-        """
-
-        # check if the dataset is already present in the current directory
-        if not os.path.exists('data/dataset_tsmc2014/dataset_TSMC2014_NYC.txt'):
-            # download the dataset
-            print('Downloading the dataset...')
-            r = requests.get(self.dataset_url)
-            with open('data/dataset_tsmc2014.zip', 'wb') as f:
-                f.write(r.content)
-            print('Download complete!')
-
-            # extract the content of the zip folder
-            print('Extracting the zip folder...')
-            os.system('unzip data/dataset_tsmc2014.zip -d data/')
-            print('Extraction complete!')
-
-            # remove the zip folder
-            print('Removing the zip folder...')
-            os.system('rm data/dataset_tsmc2014.zip')
-            print('Removal complete!')
-
-        else:
-            print('Dataset already present in the current directory!')
 
     def get_dataset(self):
         """

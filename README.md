@@ -106,21 +106,24 @@ python -m agent --sample_one_traj_of_user \
     --social_info_type=address \
     --traj_min_len=3 \
     --traj_max_len=50 \
-    --city_name=Beijing \
+    --city_name=Shanghai \
     --prompt_num=50 \
     --workers=20 \
     --exp_name=test \
     --prompt_type=agent_move_v6 \
     --model_name=llama4-17b \
-    --platform=DeepInfra
+    --platform=DeepInfra \
+    --use_int_venue  # The Shanghai-WWW2019 dataset must use this parameter, while it is optional for other datasets. This setting should also be consistent with evaluate.analysis.
 ```
 
 ### Evaluation
 ```bash
-python -m evaluate.analysis --eval_path=results/20240505/ --level=city
-python -m evaluate.analysis --eval_path=results/20240505/Beijing/agentmove/ --level=agent
-python -m evaluate.analysis --eval_path=results/20240505/Beijing/agentmove/llama3-8b/ --level=llm
-python -m evaluate.analysis --eval_path=results/20240505/Beijing/agentmove/llama3-8b/agent_move_v6/ --level=prompt
+export exp_name=test
+export city_name=Shanghai
+python -m evaluate.analysis --eval_path="results/$exp_name/" --level=city --use_int_venue
+python -m evaluate.analysis --eval_path="results/$exp_name/$city_name/agentmove/" --level=agent --use_int_venue
+python -m evaluate.analysis --eval_path="results/$exp_name/$city_name/agentmove/llama4-17b/" --level=llm --use_int_venue
+python -m evaluate.analysis --eval_path="results/$exp_name/$city_name/agentmove/llama4-17b/agent_move_v6/" --level=prompt --use_int_venue
 ```
 
 ### More Running Examples

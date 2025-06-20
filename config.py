@@ -7,7 +7,7 @@ PROXY = "http://127.0.0.1:10190" # you should prepare your proxy server
 # EXP_CITIES = ["Beijing"] # use it for quickly start
 EXP_CITIES = ["Shanghai"] # for WWW2019
 
-#'gowalla'或'TIST2015'
+# 'TIST2015'
 DATASET = 'TIST2015' # format which used by TIST2015 and WWW2019
 
 # Original Data
