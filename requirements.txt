@@ -14,3 +14,4 @@ openxlab==0.0.33
 gdown==5.2.0
 bypy==1.8.5
 huggingface-hub==0.25.1
+torch==2.1.0

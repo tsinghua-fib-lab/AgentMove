@@ -1,14 +1,14 @@
 PROMPT_NUM=200
 WORKERS=50
-PLATFORM=OpenAI
+PLATFORM="DeepInfra"
 TRAJ_MIN=3
 TRAJ_MAX=50
 SOCIAL_TYPE=address
 EXP_NAME="20240823-$TRAJ_MIN-$TRAJ_MAX"
-MODEL_NAME=gpt4omini
+MODEL_NAME=llama4-17b
 MEMORY_LEN=15
 
-CITY="Tokyo" # ('Tokyo' 'SaoPaulo' 'Moscow')
+CITY="Beijing" # ('Tokyo' 'SaoPaulo' 'Moscow')
 PROMPT_TYPE="agent_move_v6" # llmzs, llmmob, agent_move_v6
 
 # running exp
