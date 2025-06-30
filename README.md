@@ -35,7 +35,7 @@ Extensive experiments utilizing mobility data from two distinct sources reveal t
     - evaluations.py            # Statistics for evaluating a single model
     - analysis.py               # Calls evaluations.py to analyze and compare multiple models simultaneously and saves the results in results/summary
 - serving/*                     # Local deployment of LLMs; we use powerful vLLM for local deployment
-- baselines/*                   # Implementations of baseline algorithms; we use the official implementations
+- baselines/*                   # Implementations of baseline algorithms; we use the official implementations with minium modification for data
 - utils.py
 - assets/*                      # Assets
 ```
@@ -52,6 +52,7 @@ export SiliconFlow_API_KEY="xx"
 # The following APIs may require a proxy
 export DeepInfra_API_KEY="xx"
 export OpenAI_API_KEY="xx"
+export OpenRouter_API_KEY="xx"
 
 # You can also deploy the model locally via vLLM
 export vllm_KEY="xx"
@@ -101,6 +102,12 @@ python -m processing.trajectory_address_match
 
 ## Running and Evaluation
 ### Agent Execution
+The following LLM-based modules/agents (executed via `prompt_type`) are available:
+- `llmmob` for LLM-Mob [1]
+- `llmzs` for LLM-ZS [2]
+- `llmmove` for LLM-Move [3]
+- `agent_move_v6` for AgentMove [4]
+
 ```bash
 python -m agent --sample_one_traj_of_user \
     --social_info_type=address \
@@ -115,6 +122,14 @@ python -m agent --sample_one_traj_of_user \
     --platform=DeepInfra \
     --use_int_venue  # The Shanghai-WWW2019 dataset must use this parameter, while it is optional for other datasets. This setting should also be consistent with evaluate.analysis.
 ```
+
+[1] Wang, Xinglei, et al. "Where would i go next? large language models as human mobility predictors." arXiv preprint arXiv:2308.15197 (2023).
+
+[2] Beneduce, Ciro, Bruno Lepri, and Massimiliano Luca. "Large language models are zero-shot next location predictors." IEEE Access (2025).
+
+[3] Feng, Shanshan, et al. "Where to move next: Zero-shot generalization of llms for next poi recommendation." 2024 IEEE Conference on Artificial Intelligence (CAI). IEEE, 2024.
+
+[4] Feng, Jie, et al. "AgentMove: A large language model based agentic framework for zero-shot next location prediction." NACCL 2025.
 
 ### Evaluation
 ```bash
@@ -137,8 +152,8 @@ python -m evaluate.analysis --eval_path="results/$exp_name/$city_name/agentmove/
 2. You can refer to the `launch.json` file in the `.vscode` directory to enable remote debugging.
 
 # ✅ TODO List
-- [ ] Update LLM support, e.g., adding "qwen2.5" and "deepseek", support for openrouter platform
-- [ ] Add new baselines, e.g., "Taming the Long Tail in Human Mobility Prediction"
+- [x] Update LLM support, e.g., adding "qwen2.5" and "deepseek", support for openrouter platform
+- [ ] Add DL baselines, e.g., "Taming the Long Tail in Human Mobility Prediction"
 - [ ] Add new datasets, e.g., "YJMob100K"
 
 # 🌟 Citation
