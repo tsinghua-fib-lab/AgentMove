@@ -1,0 +1,11 @@
+
+ORIGIN_TRAJ_DATA = "data/processed/"
+SAVE_DIR = "baselines/STAN/data/"
+
+MAX_TRAJ_LEN=50
+MAX_EPOCH=30
+LR=3e-3
+BATCH_SIZE=1
+PROMPT_NUM=200
+
+CHECKPOINT_DIR="baselines/STAN/ckpts/"

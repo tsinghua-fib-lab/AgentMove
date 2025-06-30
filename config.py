@@ -17,7 +17,6 @@ TSMC2014_DATA_DIR = "{}dataset_tsmc2015".format(DATA_PATH)
 GOWALLA_DATA_DIR = "{}dataset_gowalla".format(DATA_PATH)         
 WWW2019_DATA_DIR = "{}dataset_www2019".format(DATA_PATH)         
 
-
 # Temp Data, used for location address matching
 NOMINATIM_DEPLOY_SERVER = os.environ["nominatim_deploy_server_address"] # IP: PORT e.g., 127.0.0.1:18081
 NOMINATIM_DEPLOY_WORKERS = 20 # Number of parallel workers for address matching
@@ -26,7 +25,7 @@ NO_ADDRESS_TRAJ_DIR = "data/input_trajectories/"  # Trajectory data without addr
 NO_ADDRESS_WEIBO_TRAJ_DIR = "{}/input/".format(WWW2019_DATA_DIR)
 NOMINATIM_PATH = 'data/nominatim/'                # Path where address data is saved after requesting address service, output data for fsq_address_deploy
 ADDRESS_L4_DIR = "data/address_L4/"                # Processed and formatted Nominatim address data into a 4-level address structure
-ADDRESS_L4_FORMAT_MODEL = "llama4-17b" # Name of the LLM used for 4-level address formatting
+ADDRESS_L4_FORMAT_MODEL = "llama3-8b" # Name of the LLM used for 4-level address formatting
 ADDRESS_L4_WORKERS = 50                # Number of parallel workers for address formatting
 
 # Final Data
@@ -42,3 +41,6 @@ WAIT_TIME_MIN = 3
 WAIT_TIME_MAX = 60
 ATTEMPT_COUNTER = 10
 VLLM_URL = "xxx" # vllm serving API URL settings
+
+
+OFFSET_DICT = {'Tokyo':540, 'Moscow':180, 'SaoPaulo':-180, 'Shanghai':480, 'Shanghai_ISP':480, 'Shanghai_Weibo':480}
