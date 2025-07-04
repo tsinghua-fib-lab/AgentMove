@@ -4,12 +4,12 @@ PLATFORM=DeepInfra
 TRAJ_MIN=3
 TRAJ_MAX=50
 SOCIAL_TYPE=address
-EXP_NAME="20240823-$TRAJ_MIN-$TRAJ_MAX-int"
-MODEL_NAME=llama3-8b
+EXP_NAME="20250630-$TRAJ_MIN-$TRAJ_MAX-int"
+MODEL_NAME=llama4-17b
 MEMORY_LEN=15
 
 CITY="Shanghai"
-PROMPT_TYPE="llmzs" # llmzs, llmmob, agent_move_v6
+PROMPT_TYPE="agent_move_v6" # llmzs, llmmob, agent_move_v6, llmmove
 
 # running exp
 python -m agent\

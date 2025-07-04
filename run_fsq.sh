@@ -9,7 +9,8 @@ MODEL_NAME=llama4-17b
 MEMORY_LEN=15
 
 CITY="Beijing" # ('Tokyo' 'SaoPaulo' 'Moscow')
-PROMPT_TYPE="agent_move_v6" # llmzs, llmmob, agent_move_v6
+# please noted that llmmove must use '--use_int_venue'
+PROMPT_TYPE="agent_move_v6" # llmzs, llmmob, agent_move_v6, llmmove
 
 # running exp
 python -m agent\
