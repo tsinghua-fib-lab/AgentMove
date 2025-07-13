@@ -47,7 +47,11 @@ if __name__ == "__main__":
     results = []
     for c, m, v, file_path in res_inputs:
         try:
-            evaluator_2 = PredictionEvaluator(args.eval_mode, file_path, args.use_int_venue)
+            # prediction resutls extraction of llmmove is different from agentmove, others are similar to agentmove
+            if 'llmmove' in file_path:
+                evaluator_2 = PredictionEvaluator(args.eval_mode, file_path, args.use_int_venue, "llmmove")
+            else:
+                evaluator_2 = PredictionEvaluator(args.eval_mode, file_path, args.use_int_venue, "agentmove")
             accuracy_top_1, accuracy_top_3, accuracy_top_5, mrr, map, ndcg  = evaluator_2.compute_combined_top_accuracies()
             percentage_with_prediction, remaining_percentage, remaining_ids, total_entries = evaluator_2.evaluate_predictions()
             results.append([c, m, v, accuracy_top_1, accuracy_top_5, mrr, ndcg, percentage_with_prediction, total_entries])

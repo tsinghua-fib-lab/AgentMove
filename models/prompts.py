@@ -1,3 +1,4 @@
+from utils import haversine_distance
 
 COMMON_PROMPT = """
 ## Task
@@ -13,18 +14,20 @@ Present your answer in a JSON object with:
 "prediction" (list of IDs of the five most probable places, ranked by probability) and "reason" (a concise justification for your prediction).
 """
 
-def prompt_generator(v, prompt_type, spatial_world_info, memory_info, social_world_info):
+def prompt_generator(v, prompt_type, spatial_world_info, memory_info, social_world_info, rec):
     prompt = ''
     if 'origin' in prompt_type or "llmzs" in prompt_type:
-        prompt = prompt_generator_llmzs(v, prompt_type)
+        prompt = prompt_generator_llmzs(v)
     elif "agent" in prompt_type:
         prompt = prompt_generator_agent(v, prompt_type, spatial_world_info, memory_info, social_world_info)
     elif "llmmob" in prompt_type:
-        prompt = prompt_generator_llmmob(v, prompt_type)
+        prompt = prompt_generator_llmmob(v)
+    elif "llmmove" in prompt_type:
+        prompt = prompt_generator_llmmove(v, rec)
     return prompt
 
 
-def prompt_generator_llmmob(v, prompt_type):
+def prompt_generator_llmmob(v):
     prompt = f"""
     Your task is to predict a user's next location based on his/her activity pattern.
     You will be provided with <history> which is a list containing this user's historical stays, then <context> which provide contextual information 
@@ -55,7 +58,7 @@ def prompt_generator_llmmob(v, prompt_type):
     return prompt
 
 
-def prompt_generator_llmzs(v, prompt_type):
+def prompt_generator_llmzs(v):
     prompt = f"""
     		Your task is to predict <next_place_id> in <target_stay>, a location with an unknown ID, while temporal data is available.
 
@@ -101,4 +104,23 @@ def prompt_generator_agent(v, prompt_type, spatial_world_info, memory_info, soci
 {OUTPUT_PROMPT}
 """
 
+    return prompt
+
+
+def prompt_generator_llmmove(v, rec):
+    prompt =f"""\
+<long-term check-ins> [Format: (POIID, Category)]: {[(item[3],item[2]) for item in v['historical_stays']]}
+<recent check-ins> [Format: (POIID, Category)]: {[(item[3],item[2]) for item in v['context_stays']]}
+<candidate set> [Format: (POIID, Distance, Category)]: {[(item['poi'],  haversine_distance(item['pos'][1],item['pos'][0],v['context_pos'][-1][1],v['context_pos'][-1][0]), item['cat']) for _, item in rec.items()]}
+Your task is to recommend a user's next point-of-interest (POI) from <candidate set> based on his/her trajectory information.
+The trajectory information is made of a sequence of the user's <long-term check-ins> and a sequence of the user's <recent check-ins> in chronological order.
+Now I explain the elements in the format. "POIID" refers to the unique id of the POI, "Distance" indicates the distance (kilometers) between the user and the POI, and "Category" shows the semantic information of the POI.
+Requirements:
+1. Consider the long-term check-ins to extract users' long-term preferences since people tend to revisit their frequent visits.
+2. Consider the recent check-ins to extract users' current perferences.
+3. Consider the "Distance" since people tend to visit nearby pois.
+4. Consider which "Category" the user would go next for long-term check-ins indicates sequential transitions the user prefer.
+Please organize your answer in a JSON object containing following keys:
+"recommendation" (10 distinct POIIDs of the ten most probable places in descending order of probability), and "reason" (a concise explanation that supports your recommendation according to the requirements). Do not include line breaks in your output.
+"""
     return prompt

@@ -12,7 +12,7 @@ from models.llm_api import LLMWrapper
 from models.world_model import SpatialWorld, SocialWorld
 from models.personal_memory import Memory
 from models.prompts import prompt_generator
-from utils import create_dir, extract_json
+from utils import create_dir, extract_json, haversine_distance
 from config import PROXY, PROCESSED_DIR
 random.seed(100)
 
@@ -33,7 +33,7 @@ class Agent:
         self.use_int_venue = use_int_venue
         self.social_info_type = social_info_type
 
-    def predict(self, user_id, traj_id, traj_seqs, target_stay, true_value):
+    def predict(self, user_id, traj_id, traj_seqs, target_stay, true_value, stay_points):
 
         # spatial world model info
         spatial_world_info = self.spatial_world.get_world_info()
@@ -46,13 +46,33 @@ class Agent:
         self_history_points = [x[3] for x in traj_seqs["context_stays"]]
         social_world_info = self.social_world.get_world_info(last_venue_id, self_history_points, self.social_info_type)
 
+        # prepare candiates fro baseline llmmove
+        candidate_poi_info = dict()
+        output = dict()
+        if self.prompt_type == "llmmove":
+            all_pois = list(stay_points.keys())
+            tar_poi = int(true_value['ground_stay'])
+            # 5 is the limit for candidate POIs within a 5km range of the correct option, and 99 ensures that each prediction matches the original paper's setting, which is 100 options
+            candidates_within_xkm = 5
+            for poi in all_pois:
+                if haversine_distance(stay_points[poi]['pos'][1],stay_points[poi]['pos'][0],traj_seqs['context_pos'][-1][1],traj_seqs['context_pos'][-1][0]) < 5:
+                    candidate_poi_info.update({poi: stay_points[poi]})
+                    if len(candidate_poi_info) > 99:
+                        break
+            # print(len(candidate_poi_info))
+
         # final prompt
-        prompt_text = prompt_generator(traj_seqs, self.prompt_type, spatial_world_info, memory_info, social_world_info)
+        prompt_text = prompt_generator(traj_seqs, self.prompt_type, spatial_world_info, memory_info, social_world_info, candidate_poi_info)
         pre_text = self.llm_model.get_response(prompt_text=prompt_text)
-        output_json, prediction, reason = extract_json(pre_text)
-        
-        # true_addr = true_value["ground_addr"]
-        true_venue = true_value["ground_stay"]
+
+        # prediction results extraction
+        if self.prompt_type == "llmmove":
+            output_json, prediction, reason = extract_json(pre_text, prediction_key="recommendation")
+            true_venue = tar_poi
+        else:
+            output_json, prediction, reason = extract_json(pre_text, prediction_key="prediction")
+            # true_addr = true_value["ground_addr"]
+            true_venue = true_value["ground_stay"]
 
         predictions = {
             'input': prompt_text,
@@ -149,14 +169,29 @@ class Agents:
 
 
     def get_predictions(self):
+
+        stay_points = {}
+        if self.prompt_type == "llmmove":
+            for traj in tqdm.tqdm(self.trajectories):
+                for idx, point in enumerate(traj[2]['historical_stays']):
+                    stay_points[int(point[3])] = {'poi': int(point[3]), 'cat': point[2], 'pos': traj[2]['historical_pos'][idx]}
+                for idx, point in enumerate(traj[2]['context_stays']):
+                    stay_points[int(point[3])] = {'poi': int(point[3]), 'cat': point[2], 'pos': traj[2]['context_pos'][idx]}
+                for user, trajs in self.ground_data.items():
+                    for traj,info in trajs.items():
+                        if int(info['ground_stay']) not in stay_points:
+                            stay_points[int(info['ground_stay'])] = {'poi': int(info['ground_stay']), 'cat': None, 'pos': info['ground_pos']}
+
         if self.workers==1:
             for traj in tqdm.tqdm(self.trajectories):
-                user_id, cur_context_stays = self.single_prediction(traj)
+                user_id, cur_context_stays = self.single_prediction(traj, stay_points, None)
                 self.known_stays[user_id].extend(cur_context_stays)
         elif args.sample_one_traj_of_user:
             with multiprocessing.Pool(self.workers) as pool:
-                res = pool.starmap(self.single_prediction, [(traj, None) for traj in self.trajectories])
+                res = pool.starmap(self.single_prediction, [(traj, stay_points, None) for traj in self.trajectories])
         else:
+            # BUG: Use multiprocessing to speed up the prediction process
+            raise NotImplementedError("Multiprocessing is not implemented yet, please use single process for now.")
             manager = multiprocessing.Manager()
             know_stays_parallel = manager.dict()
             for u in self.known_stays:
@@ -167,7 +202,7 @@ class Agents:
             shared_dict['lock'] = manager.Lock()
 
             with multiprocessing.Pool(min(self.workers, len(self.trajectory_groups))) as pool:
-                res = pool.starmap(self.single_prediction_group, [(traj_groups, shared_dict) for traj_groups in self.trajectory_groups])
+                res = pool.starmap(self.single_prediction_group, [(traj_groups, stay_points, shared_dict) for traj_groups in self.trajectory_groups])
 
     def single_prediction_group(self, trajs, shared_dict):
         for traj in trajs:
@@ -177,7 +212,7 @@ class Agents:
                 shared_dict['data'][user_id].extend(cur_context_stays)
             # self.known_stays[user_id].extend(cur_context_stays)
 
-    def single_prediction(self, traj, shared_dict=None):
+    def single_prediction(self, traj, stay_points, shared_dict=None):
         user_id, traj_id, traj_seqs = traj
 
         if self.skip_existing_is_on and self.skip_existing_file(user_id=user_id, traj_id=traj_id):
@@ -223,7 +258,7 @@ class Agents:
 
         # predict
         true_value = self.ground_data[user_id][traj_id]
-        agent.predict(user_id, traj_id, traj_seqs, target_stay, true_value)
+        agent.predict(user_id, traj_id, traj_seqs, target_stay, true_value, stay_points)
 
         return (user_id, cur_context_stays)
 
@@ -232,7 +267,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--city_name', type=str, default="Shanghai")
     parser.add_argument('--model_name', type=str, default="qwen2.5-7b")
-    parser.add_argument('--platform', type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm"])
+    parser.add_argument('--platform', type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm", "OpenRouter"])
     parser.add_argument('--trajectory_mode', type=str, default="trajectory_split", choices=["trajectory_split"])
     parser.add_argument("--historical_stays", type=int, default=15)
     parser.add_argument('--context_stays', type=int, default=6)
@@ -242,7 +277,7 @@ if __name__ == "__main__":
     parser.add_argument('--sample_one_traj_of_user', action='store_true',)
     parser.add_argument('--max_sample_trajectories', type=int, default=100)
     parser.add_argument('--use_int_venue', action='store_true', help='Use int Venue ID')
-    parser.add_argument('--prompt_type', type=str, default="agent_move_v6", choices=["agent_move_v6", "origin", "llmmob", "llmzs"])
+    parser.add_argument('--prompt_type', type=str, default="agent_move_v6", choices=["agent_move_v6", "origin", "llmmob", "llmzs", "llmmove"])
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--exp_name', type=str, default="")
     parser.add_argument('--social_info_type', type=str, default="address")
@@ -252,8 +287,6 @@ if __name__ == "__main__":
     parser.add_argument('--max_explore_places', type=int, default=5)
 
     args = parser.parse_args()
-    if args.model_name in ['gpt35turbo', 'gpt4omini', 'gpt4o', 'gpt4turbo']:
-        args.platform = "OpenAI"
     print("INFO START TIME:{}".format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
     print("args:{}".format(args.__dict__))
 

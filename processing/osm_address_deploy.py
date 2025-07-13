@@ -36,23 +36,13 @@ def geocode_extract(city, venue, lon, lat):
     except:
         addr = ""
         cate = "" 
-    if DATASET == 'TIST2015':
-        item_info = {
-                    "city": city,
-                    "venue_id": venue,
-                    "lng": lon,
-                    "lat": lat,
-                    "address": addr 
-                }
-    elif DATASET == 'gowalla':
-        item_info = {
-                    "city": city,
-                    "venue_id": venue,
-                    "lng": lon,
-                    "lat": lat,
-                    "venue_category_name": cate,
-                    "address": addr
-                }
+    item_info = {
+                "city": city,
+                "venue_id": venue,
+                "lng": lon,
+                "lat": lat,
+                "address": addr 
+            }
     return item_info
 
 

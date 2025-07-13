@@ -36,11 +36,12 @@ class PredictionEvaluator:
     # Compile the regex pattern once as a class attribute for efficiency
     ALPHANUMERIC_PATTERN = re.compile(r'[a-f0-9]{24}')
 
-    def __init__(self, mode, folder_path, use_int_venue=False):
+    def __init__(self, mode, folder_path, use_int_venue=False, prompt_type=None):
         # Constructor to initialize the folder path and load data
         self.folder_path = folder_path
         self.mode = mode
         self.use_int_venue = use_int_venue
+        self.prompt_type = prompt_type
         self.combined_data = {}  # Dictionary to hold all combined data
         self.load_data()
 
@@ -69,7 +70,10 @@ class PredictionEvaluator:
 
     def extract_combined_response_data(self):
         """Extract prediction codes from the loaded dataset."""
-        total_outputs = sum('output' in entry for entry in self.combined_data.values())
+        if self.prompt_type == "llmmove":
+            total_outputs = len(self.combined_data.values())
+        else:
+            total_outputs = sum('output' in entry for entry in self.combined_data.values())
         all_codes = {}
 
         for key, entry in self.combined_data.items():
@@ -130,6 +134,18 @@ class PredictionEvaluator:
 
         return prediction_values
 
+
+    def get_llmmove_prediction_values(self, predictions):
+            """Extract prediction values from different prediction formats."""
+            prediction_values = []
+            if isinstance(predictions['prediction'],list):
+                try:
+                    prediction_values.extend([int(p) for p in predictions['prediction']])
+                except:
+                    prediction_values.extend([])
+            return prediction_values
+
+
     def compute_combined_top_accuracies(self):
         """Compute top-1, top-3, and top-5 accuracies."""
         total_outputs, extracted_codes = self.extract_combined_response_data()
@@ -142,12 +158,16 @@ class PredictionEvaluator:
 
         for key, predictions in extracted_codes.items():
             if key in self.combined_data:
-                if self.use_int_venue:
+                if self.prompt_type == "llmmove":
                     true_value = self.combined_data[key]['true']
-                    prediction_values = [pred for pred in self.get_prediction_values(key, predictions, self.use_int_venue)]
+                    prediction_values = [pred for pred in self.get_llmmove_prediction_values(predictions)]
                 else:
-                    true_value = self.combined_data[key]['true'].lower()
-                    prediction_values = [pred.lower() for pred in self.get_prediction_values(key, predictions, self.use_int_venue)]
+                    if self.use_int_venue:
+                        true_value = self.combined_data[key]['true']
+                        prediction_values = [pred for pred in self.get_prediction_values(key, predictions, self.use_int_venue)]
+                    else:
+                        true_value = self.combined_data[key]['true'].lower()
+                        prediction_values = [pred.lower() for pred in self.get_prediction_values(key, predictions, self.use_int_venue)]
 
                 # Check if true value matches predictions for different top-n accuracies
                 if true_value in prediction_values:
@@ -336,15 +356,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--eval_mode', type=str, default="rule", choices=['gpt','rule'])
     parser.add_argument('--use_int_venue', action='store_true')
+    parser.add_argument('--prompt_type', type=str, default="agentmove", choices=['agentmove','llmmove']) # only the results extraction format of llmmove is different, other methods use the same format with AgentMove
     parser.add_argument('--eval_path', type=str)
     args = parser.parse_args()
     
     if args.use_int_venue:
-        flag = True
+        use_int_venue_flag = True
     else:
-        flag = False
+        use_int_venue_flag = False
     # folder_path = 'results/llm/llama3-70b/1/original_setting'  # path with all the JSONs of the model to test
-    evaluator_2 = PredictionEvaluator(args.eval_mode, args.eval_path, flag)
+    evaluator_2 = PredictionEvaluator(args.eval_mode, args.eval_path, use_int_venue_flag, args.prompt_type)
 
     # Evaluate predictions
     accuracy_top_1, accuracy_top_3, accuracy_top_5, mrr, map_score, ndcg_score = evaluator_2.compute_combined_top_accuracies()
