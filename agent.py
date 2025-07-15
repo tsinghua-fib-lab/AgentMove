@@ -232,7 +232,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--city_name', type=str, default="Shanghai")
     parser.add_argument('--model_name', type=str, default="qwen2.5-7b")
-    parser.add_argument('--platform', type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm"])
+    parser.add_argument('--platform', type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm","OpenRouter"])
     parser.add_argument('--trajectory_mode', type=str, default="trajectory_split", choices=["trajectory_split"])
     parser.add_argument("--historical_stays", type=int, default=15)
     parser.add_argument('--context_stays', type=int, default=6)

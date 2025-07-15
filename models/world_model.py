@@ -97,8 +97,8 @@ class SocialWorld:
                 continue
             traj_id = traj_ids[0]
             train_instance = traj_dataset[uid][traj_id]["historical_stays_long"]
-            venue_ids = [x[3] for x in train_instance] # venue_id
-            nodes_list.append([[x[3], x[2], x[4], x[5], x[6], x[7]] for x in train_instance]) # ['hour', 'weekday', 'venue_category_name', venue_id_type, "admin", "subdistrict", "poi", "street"]
+            venue_ids = [str(x[3]) for x in train_instance]  # venue_id 转字符串
+            nodes_list.append([[str(x[3]), x[2], x[4], x[5], x[6], x[7]] for x in train_instance])
             traj_edges = list(zip(venue_ids[:-1], venue_ids[1:]))
             edges_list.append(traj_edges)
 
@@ -109,19 +109,29 @@ class SocialWorld:
         edges_weights = list(Counter(edges).items())
         edges_final = []
         for edge in edges_weights:
+            # edge[0][0] 和 edge[0][1] 已经是字符串，无需转换
             edges_final.append([edge[0][0], edge[0][1], edge[1]])
         edges_df = pd.DataFrame(edges_final, columns=["src", "dst", "weight"])
+
         self.graph = nx.from_pandas_edgelist(df=edges_df, source="src", target="dst", edge_attr=["weight"])
+
         
+        all_nodes = set(nodes_df['venue_id'].unique())
+        for node in all_nodes:
+            if node not in self.graph:
+                self.graph.add_node(node)
+
+       
         for _, row in nodes_df.iterrows():
-            node = row['venue_id']
-            self.graph.nodes[node]['category'] = row['venue_category_name']
-            self.graph.nodes[node]['admin'] = row['admin']
-            self.graph.nodes[node]['subdistrict'] = row['subdistrict']
-            self.graph.nodes[node]["street"] = row["street"]
-            self.graph.nodes[node]['poi'] = row['poi']
-        
+            node = row['venue_id'] 
+            self.graph.nodes[node]['category'] = str(row['venue_category_name'])
+            self.graph.nodes[node]['admin'] = str(row['admin'])
+            self.graph.nodes[node]['subdistrict'] = str(row['subdistrict'])
+            self.graph.nodes[node]['street'] = str(row['street'])
+            self.graph.nodes[node]['poi'] = str(row['poi'])
+
         nx.write_gml(self.graph, self.graph_file_path)
+
 
 
     def get_processed_graph(self, traj_dataset):
