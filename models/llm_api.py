@@ -23,20 +23,21 @@ def get_api_key(platform, model_name=None):
         return os.environ["vllm_KEY"]
     elif platform=="SiliconFlow":
         return os.environ["SiliconFlow_API_KEY"]
+    elif platform=="OpenRouter":
+        return os.environ["OpenRouter_API_KEY"]
 
 
 class LLMAPI:
     def __init__(self, model_name, platform=None):
         self.model_name = model_name
         
-        self.platform_list = ["SiliconFlow", "OpenAI", "DeepInfra", 'vllm']
+        self.platform_list = ["SiliconFlow", "OpenAI", "DeepInfra", 'vllm','OpenRouter']
         self.model_platforms = {
                     "SiliconFlow":  ['qwen2.5-72b', 'qwen2.5-7b', 'qwen2-1.5b', 'qwen2-7b', 'qwen2-14b', 'qwen2-72b', 'glm4-9b', 'glm3-6b', 'deepseekv2', 'qwen2-1.5b-pro', 'qwen2-7b-pro', 'glm4-9b-pro', 'glm3-6b-pro'],
                     "OpenAI":       ['gpt35turbo', 'gpt4turbo', 'gpt4o', 'gpt4omini'],
                     "DeepInfra":    ['llama4-17b', 'llama3-8b', 'llama3-70b', 'gemma2-9b', 'gemma2-27b', 'mistral7bv2', 'llama3.1-8b', 'llama3.1-70b', 'mistral7bv3', 'llama3.1-405b'],
-                    "vllm":         ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local']
-                }
-        
+                    "vllm":         ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local'],
+                    "OpenRouter":   ["qwen3-8b", "qwen3-14b", "gemma3n-e4b-it", "deepseek-v3", "gpt-4.1-mini"]}
         self.model_mapper = {
             'qwen2.5-7b': "Qwen/Qwen2.5-7B-Instruct",
             'qwen2.5-72b': "Qwen/Qwen2.5-72B-Instruct",
@@ -74,7 +75,15 @@ class LLMAPI:
             'llama3-8B-local':'llama3-8B-local',
             'gemma2-2b-local': 'gemma2-2b-local',
             'chatglm3-citygpt': 'chatglm3-citygpt',
-            'chatglm3-6B-local': 'chatglm3-6B-local'
+            'chatglm3-6B-local': 'chatglm3-6B-local',
+           
+            "qwen3-8b": "Qwen/Qwen3-8B",
+            "qwen3-14b": "Qwen/Qwen3-14B",
+            "gemma3n-e4b-it": "google/gemma-3n-e4b-it",
+            "deepseek-v3": "deepseek/deepseek-v3-base:free",
+            "gpt-4.1-mini":  "openai/gpt-4.1-mini"
+
+
         }
 
         support_models = ";".join([";".join(self.model_platforms[k]) for k in self.model_platforms])
@@ -118,6 +127,13 @@ class LLMAPI:
                 api_key=get_api_key(platform)
             )
     
+        elif self.platform == "OpenRouter":
+            self.client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=get_api_key(platform),
+                http_client=httpx.Client(proxies=PROXY),
+            )
+            
     def get_client(self):
         return self.client
     
@@ -171,7 +187,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="llama3-8b")
-    parser.add_argument("--platform", type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra"])
+    parser.add_argument("--platform", type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra","OpenRouter"])
     args = parser.parse_args()
 
     llm = LLMWrapper(model_name=args.model_name, platform=args.platform)

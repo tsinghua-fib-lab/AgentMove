@@ -22,6 +22,7 @@ def get_normalize_city_name(city_name):
 def get_response(address):
     # system_messages = [{"role": "system", "content": "You are a helpful assistant for Address Parsing."}]
     llm_client = LLMWrapper(ADDRESS_L4_FORMAT_MODEL)
+    print(f"[DEBUG] address: {address} ({type(address)})")
     prompt_text = "You are a helpful assistant for Address Parsing.\n" + address + """Please get the Administrative Area Name, subdistrict name/neighbourhood name,access road or feeder road name, building name/POI name. \nPresent your answer in a JSON object with:'administrative' (the Administrative Area Name) ,'subdistrict' (subdistrict name/neighbourhood name),'poi'(building name/POI name),'street'(access road or feeder road name which POI/building is on). \nDo not include the key if information is not given.Do not output other content."""
     try:
         full_text = llm_client.get_response(prompt_text)
@@ -118,6 +119,7 @@ if __name__ == "__main__":
         if not os.path.exists(file_path):
             city_addr_dict = {}  
             addr_data = pd.read_csv(os.path.join(NOMINATIM_PATH,addr_file), sep="\t")
+            addr_data = addr_data.dropna(subset=["address"])
 
             # sequential mode for debug
             if RUNNING_MODE == "sequential":
