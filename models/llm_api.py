@@ -23,16 +23,19 @@ def get_api_key(platform, model_name=None):
         return os.environ["vllm_KEY"]
     elif platform=="SiliconFlow":
         return os.environ["SiliconFlow_API_KEY"]
+    elif platform=="OpenRouter":
+        return os.environ["OpenRouter_API_KEY"]
 
 
 class LLMAPI:
     def __init__(self, model_name, platform=None):
         self.model_name = model_name
         
-        self.platform_list = ["SiliconFlow", "OpenAI", "DeepInfra", 'vllm']
+        self.platform_list = ["SiliconFlow", "OpenAI", "DeepInfra", 'vllm', "OpenRouter"]
         self.model_platforms = {
                     "SiliconFlow":  ['qwen2.5-72b', 'qwen2.5-7b', 'qwen2-1.5b', 'qwen2-7b', 'qwen2-14b', 'qwen2-72b', 'glm4-9b', 'glm3-6b', 'deepseekv2', 'qwen2-1.5b-pro', 'qwen2-7b-pro', 'glm4-9b-pro', 'glm3-6b-pro'],
-                    "OpenAI":       ['gpt35turbo', 'gpt4turbo', 'gpt4o', 'gpt4omini'],
+                    "OpenAI":       [],
+                    "OpenRouter":   ['gpt35turbo', 'gpt4turbo', 'gpt4o', 'gpt4omini'],
                     "DeepInfra":    ['llama4-17b', 'llama3-8b', 'llama3-70b', 'gemma2-9b', 'gemma2-27b', 'mistral7bv2', 'llama3.1-8b', 'llama3.1-70b', 'mistral7bv3', 'llama3.1-405b'],
                     "vllm":         ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local']
                 }
@@ -98,6 +101,12 @@ class LLMAPI:
 
         if self.platform == "OpenAI":
             self.client = OpenAI(
+                api_key=get_api_key(platform),
+                http_client=httpx.Client(proxies=PROXY),
+            )
+        if self.platform == "OpenRouter":
+            self.client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
                 api_key=get_api_key(platform),
                 http_client=httpx.Client(proxies=PROXY),
             )

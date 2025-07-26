@@ -1,0 +1,8 @@
+[submodule "baselines/LibCity-LocPre"]
+	path = baselines/LibCity-LocPre
+	url = git@github.com:vonfeng/LibCity-LocPre.git
+	branch = agent
+[submodule "baselines/Spatio-Temporal-Graph-Transformer"]
+	path = baselines/Spatio-Temporal-Graph-Transformer
+	url = git@github.com:Hiimingway/Spatio-Temporal-Hypergraph-Model.git
+	branch = agentmove
