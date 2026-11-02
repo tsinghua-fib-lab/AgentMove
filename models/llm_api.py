@@ -35,9 +35,9 @@ class LLMAPI:
         self.model_platforms = {
                     "SiliconFlow":  ['qwen2.5-72b', 'qwen2.5-7b', 'qwen2-1.5b', 'qwen2-7b', 'qwen2-14b', 'qwen2-72b', 'glm4-9b', 'glm3-6b', 'deepseekv2', 'qwen2-1.5b-pro', 'qwen2-7b-pro', 'glm4-9b-pro', 'glm3-6b-pro'],
                     "OpenAI":       [],
-                    "OpenRouter":   ['gpt35turbo', 'gpt4turbo', 'gpt4o', 'gpt4omini'],
+                    "OpenRouter":   ['gpt4o', 'gpt4omini', 'qwen2.5-7b', 'qwen2.5-72b', 'llama3.1-8b', 'llama3.1-70b', 'gemma2-27b', 'gpt4omini-or', 'qwen2.5-7b-or'],
                     "DeepInfra":    ['llama4-17b', 'llama3-8b', 'llama3-70b', 'gemma2-9b', 'gemma2-27b', 'mistral7bv2', 'llama3.1-8b', 'llama3.1-70b', 'mistral7bv3', 'llama3.1-405b'],
-                    "vllm":         ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local']
+                    "vllm":         ['llama3-8B-local', 'gemma2-2b-local', 'chatglm3-citygpt', 'chatglm3-6B-local', 'qwen2.5-7b-local']
                 }
         
         self.model_mapper = {
@@ -77,7 +77,22 @@ class LLMAPI:
             'llama3-8B-local':'llama3-8B-local',
             'gemma2-2b-local': 'gemma2-2b-local',
             'chatglm3-citygpt': 'chatglm3-citygpt',
-            'chatglm3-6B-local': 'chatglm3-6B-local'
+            'chatglm3-6B-local': 'chatglm3-6B-local',
+            'qwen2.5-7b-local': 'qwen2.5:7b',
+            
+        }
+
+        # OpenRouter uses its own "vendor/model" IDs
+        self.openrouter_model_mapper = {
+            'gpt4o': 'openai/gpt-4o-2024-05-13',
+            'gpt4omini': 'openai/gpt-4o-mini-2024-07-18',
+            'qwen2.5-7b': 'qwen/qwen-2.5-7b-instruct',
+            'qwen2.5-72b': 'qwen/qwen-2.5-72b-instruct',
+            'llama3.1-8b': 'meta-llama/llama-3.1-8b-instruct',
+            'llama3.1-70b': 'meta-llama/llama-3.1-70b-instruct',
+            'gemma2-27b': 'google/gemma-2-27b-it',
+            'gpt4omini-or': 'openai/gpt-4o-mini',
+            'qwen2.5-7b-or': 'qwen/qwen-2.5-7b-instruct',
         }
 
         support_models = ";".join([";".join(self.model_platforms[k]) for k in self.model_platforms])
@@ -108,7 +123,7 @@ class LLMAPI:
             self.client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
                 api_key=get_api_key(platform),
-                http_client=httpx.Client(proxies=PROXY),
+                # http_client=httpx.Client(proxies=PROXY),
             )
         elif self.platform == "DeepInfra":
             self.client = OpenAI(
@@ -118,7 +133,7 @@ class LLMAPI:
             )
         elif self.platform == "SiliconFlow":
             self.client = OpenAI(
-                base_url="https://api.siliconflow.cn/v1",
+                base_url="https://api.siliconflow.com/v1",
                 api_key=get_api_key(platform, model_name)
             )
         elif self.platform == 'vllm':
@@ -131,6 +146,8 @@ class LLMAPI:
         return self.client
     
     def get_model_name(self):
+        if self.platform == "OpenRouter":
+            return self.openrouter_model_mapper[self.model_name]
         return self.model_mapper[self.model_name]
     
     def get_platform_name(self):
@@ -180,7 +197,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default="llama3-8b")
-    parser.add_argument("--platform", type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra"])
+    parser.add_argument("--platform", type=str, default="SiliconFlow", choices=["SiliconFlow", "OpenAI", "DeepInfra", "vllm", "OpenRouter"])
     args = parser.parse_args()
 
     llm = LLMWrapper(model_name=args.model_name, platform=args.platform)
