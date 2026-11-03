@@ -104,7 +104,7 @@ if __name__ == "__main__":
             # TODO 当前只要检测到文件存在就会跳过，并不鲁棒，上次执行失败也会产生同样效果
             city = pos_file.split("_")[0]
             done_cities.append(city)
-        city = addr_file.split(".")[0]
+        city = addr_file.split("_")[0]
 
         print(city)
         if city in done_cities:
@@ -118,7 +118,8 @@ if __name__ == "__main__":
         file_path = os.path.join(ADDRESS_L4_DIR, f'{city}_addr_dict.json')
         if not os.path.exists(file_path):
             city_addr_dict = {}  
-            addr_data = pd.read_csv(os.path.join(NOMINATIM_PATH,addr_file), sep="\t")
+            addr_data = pd.read_csv(os.path.join(NOMINATIM_PATH, addr_file), sep="\t", header=None,
+                                    names=["city", "venue_id", "lng", "lat", "address"], quoting=3)
 
             # sequential mode for debug
             if RUNNING_MODE == "sequential":
@@ -189,18 +190,19 @@ if __name__ == "__main__":
 
         print(f"Start matching address of {city}....")
         city_data = pd.read_csv(os.path.join(NO_ADDRESS_TRAJ_DIR, f'{city}_filtered.csv'))
-        
-        city_data["city_normalize"] = city_data["city"].apply(lambda x: get_normalize_city_name(x))
-        city_data['key'] = city_data.apply(lambda x: f"{x['city_normalize']}_{x['venue_id']}", axis=1)
+
+        city_data['key'] = city_data['venue_id'].apply(lambda v: f"{city}_{v}")
+        total_rows = len(city_data)
         city_data = city_data[city_data['key'].isin(city_addr_dict.keys())]
-        
+        print(f"matched {len(city_data)}/{total_rows} trajectory rows to an address")
+
         city_data['admin'] = city_data['key'].apply(lambda key: city_addr_dict[key].get("administrative", ""))
         city_data['subdistrict'] = city_data['key'].apply(lambda key: city_addr_dict[key].get("subdistrict", ""))
         city_data['poi'] = city_data['key'].apply(lambda key: city_addr_dict[key].get("poi", ""))
         city_data['street'] = city_data['key'].apply(lambda key: city_addr_dict[key].get("street", ""))
         if DATASET == "gowalla":
             city_data['venue_category_name'] = city_data['key'].apply(lambda key: city_addr_dict[key].get("venue_category_name", ""))
-        
+
         city_data = city_data.drop(columns=['key'])
-        
+
         city_data.to_csv(os.path.join(CITY_DATA_DIR, f'{city}_filtered.csv'), encoding="utf-8", index=False)

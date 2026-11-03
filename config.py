@@ -2,7 +2,7 @@
 import os
 
 # 其他配置
-PROXY = "http://127.0.0.1:10190" # you should prepare your proxy server
+PROXY = os.environ.get("PROXY") # e.g. "http://127.0.0.1:10190"; None means connect directly
 # EXP_CITIES = ['Tokyo', 'Nairobi', 'NewYork', 'Sydney', 'CapeTown', 'Paris', 'Beijing', 'Mumbai', 'SanFrancisco', 'London', 'SaoPaulo', 'Moscow']
 # EXP_CITIES = ["Beijing"] # use it for quickly start
 EXP_CITIES = ["Shanghai"] # for WWW2019
@@ -25,8 +25,8 @@ NO_ADDRESS_TRAJ_DIR = "data/input_trajectories/"  # Trajectory data without addr
 NO_ADDRESS_WEIBO_TRAJ_DIR = "{}/input/".format(WWW2019_DATA_DIR)
 NOMINATIM_PATH = 'data/nominatim/'                # Path where address data is saved after requesting address service, output data for fsq_address_deploy
 ADDRESS_L4_DIR = "data/address_L4/"                # Processed and formatted Nominatim address data into a 4-level address structure
-ADDRESS_L4_FORMAT_MODEL = "llama3-8b" # Name of the LLM used for 4-level address formatting
-ADDRESS_L4_WORKERS = 50                # Number of parallel workers for address formatting
+ADDRESS_L4_FORMAT_MODEL = "gpt4omini-or" # Name of the LLM used for 4-level address formatting
+ADDRESS_L4_WORKERS = 10                # Number of parallel workers for address formatting
 
 # Final Data
 CITY_DATA_DIR = "data/input_trajectories_clean/"  # Path to trajectory data read by data.py, also the output data path from process_city_data_pos
@@ -40,7 +40,7 @@ SUMMARY_SAVE_DIR = "results/summary/"            # analysis.py
 WAIT_TIME_MIN = 3
 WAIT_TIME_MAX = 60
 ATTEMPT_COUNTER = 10
-VLLM_URL = "xxx" # vllm serving API URL settings
+VLLM_URL = "http://localhost:11434/v1" # vllm serving API URL settings
 
 
 OFFSET_DICT = {'Tokyo':540, 'Moscow':180, 'SaoPaulo':-180, 'Shanghai':480, 'Shanghai_ISP':480, 'Shanghai_Weibo':480}
