@@ -8,8 +8,9 @@ def downlad_model(model_name="google/gemma-2-2b-it", model_path="/you_local_path
         from config import PROXY
         print("using huggingface downloader, please use proxy")
 
-        os.environ["http_proxy"] = PROXY
-        os.environ["https_proxy"] = PROXY
+        if PROXY:
+            os.environ["http_proxy"] = PROXY
+            os.environ["https_proxy"] = PROXY
 
         snapshot_download(model_name, local_dir=model_path, resume_download=True, local_dir_use_symlinks=False, max_workers=1)
 
@@ -42,7 +43,7 @@ def download_data(data_name="www19", use_proxy=True):
     }
     dataset_url = dataset_urls_dict[data_name]
     
-    if use_proxy:
+    if use_proxy and PROXY:
         os.environ["http_proxy"] = PROXY
         os.environ["https_proxy"] = PROXY
     print('Downloading the dataset {}...'.format(data_name))
